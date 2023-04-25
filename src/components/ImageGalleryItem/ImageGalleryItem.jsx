@@ -7,9 +7,9 @@ const ImageGalleryItem = ({ image, onClick }) => {
       <img
         className={css.ImageGalleryItemImage}
         src={image.webformatURL}
-        alt="imag"
+        alt={image.tags}
         loading="lazy"
-        onClick={onClick}
+        onClick={() => onClick(image.largeImageURL)}
       />
     </li>
   );
@@ -20,6 +20,7 @@ ImageGalleryItem.propTypes = {
     PropTypes.shape({
       id: PropTypes.object.isRequired,
       webformatURL: PropTypes.string.isRequired,
+      tags: PropTypes.string.isRequired,
     })
   ),
   onClick: PropTypes.func,

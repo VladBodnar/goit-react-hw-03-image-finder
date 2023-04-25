@@ -16,12 +16,10 @@ class App extends Component {
     totalImg: 0,
     isLoad: false,
     error: null,
-    showModal: false,
   };
 
   handleFormSubmit = searchName => {
-    this.setState({ searchName });
-    this.setState({ page: 1 });
+    this.setState({ searchName, page: 1 });
   };
 
   pageNumberUpdate = () => {
@@ -33,7 +31,7 @@ class App extends Component {
   };
 
   componentDidUpdate(_, prevState) {
-    const { searchName, page, imagesArray, totalImg } = this.state;
+    const { searchName, page } = this.state;
     if (
       prevState.searchName !== this.state.searchName ||
       prevState.page !== this.state.page
@@ -41,8 +39,16 @@ class App extends Component {
       this.setState({ isLoad: true });
       getImages(searchName, page)
         .then(res => {
+          const images = res.data.hits.map(
+            ({ id, tags, webformatURL, largeImageURL }) => ({
+              id,
+              tags,
+              webformatURL,
+              largeImageURL,
+            })
+          );
           this.setState(prevState => ({
-            imagesArray: [...prevState.imagesArray, ...res.data.hits],
+            imagesArray: [...prevState.imagesArray, ...images],
             totalImg: res.data.totalHits,
           }));
         })
@@ -55,14 +61,8 @@ class App extends Component {
     }
   }
 
-  onStartModal = event => {
-    const { showModal } = this.state;
-    this.setState({ showModal: !showModal });
-    this.setState({
-      activeImg: this.state.imagesArray.find(
-        imagObj => imagObj.webformatURL === event.currentTarget.src
-      ).largeImageURL,
-    });
+  onStartModal = activeImg => {
+    this.setState({ activeImg });
   };
   onStopModal = () => {
     this.setState({ activeImg: null });
@@ -89,5 +89,3 @@ class App extends Component {
   }
 }
 export default App;
-
-
